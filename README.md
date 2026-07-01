@@ -64,7 +64,7 @@ Bu buyruq AlQuran Cloud API dan quyidagi suralarni yuklab oladi:
 export BOT_TOKEN=your_token_here   # Linux/Mac
 set BOT_TOKEN=your_token_here       # Windows
 
-python bot.py
+python bot1.py
 ```
 
 ## Foydalanuvchi buyruqlari
@@ -124,7 +124,7 @@ Botni serverda ishlatish uchun:
 
 ```bash
 # systemd service yoki
-nohup python bot.py > bot.log 2>&1 &
+nohup python bot1.py > bot.log 2>&1 &
 
 # yoki Docker
 docker build -t quron-bot .
