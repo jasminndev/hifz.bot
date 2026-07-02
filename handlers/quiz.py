@@ -1,10 +1,11 @@
 import random
+
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 
-from db.session import AsyncSessionLocal
 from db.crud import get_user, get_memorized_ayahs, get_ayah_by_id
-from bot.keyboards import quiz_keyboard, main_menu_keyboard
+from db.session import AsyncSessionLocal
+from keyboards import quiz_keyboard, main_menu_keyboard
 
 router = Router()
 

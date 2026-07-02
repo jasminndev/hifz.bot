@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from db.crud import get_user, get_stats
 from db.session import AsyncSessionLocal
-from bot.keyboards import main_menu_keyboard
+from keyboards import main_menu_keyboard
 
 router = Router()
 

@@ -1,13 +1,12 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery
-
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import Message, CallbackQuery
 
-from db.session import AsyncSessionLocal
 from db.crud import get_user, create_user, set_daily_goal
-from bot.keyboards import goal_keyboard, main_menu_keyboard
+from db.session import AsyncSessionLocal
+from keyboards import goal_keyboard, main_menu_keyboard
 
 router = Router()
 

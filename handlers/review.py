@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 
@@ -7,9 +9,12 @@ from db.crud import (
 )
 from db.models import ReviewResult
 from db.session import AsyncSessionLocal
-from bot.keyboards import review_keyboard, main_menu_keyboard
+from keyboards import review_keyboard, main_menu_keyboard
+from utils.safe_parse import parse_callback_int
 
 router = Router()
+
+logger = logging.getLogger(__name__)
 
 
 @router.message(F.text == "🔁 Takrorlash")
@@ -46,11 +51,21 @@ async def send_reviews(message: Message):
 
 @router.callback_query(F.data.startswith("show_translation_"))
 async def show_translation(callback: CallbackQuery):
-    progress_id = int(callback.data.split("_")[2])
+    progress_id = parse_callback_int(callback.data, 2)
+    if progress_id is None:
+        await callback.answer("Noto'g'ri so'rov.", show_alert=True)
+        return
 
     async with AsyncSessionLocal() as session:
         progress = await get_progress_by_id(session, progress_id)
+        if not progress:
+            await callback.answer("Oyat topilmadi.", show_alert=True)
+            return
+
         ayah = await get_ayah_by_id(session, progress.ayah_id)
+        if not ayah:
+            await callback.answer("Oyat topilmadi.", show_alert=True)
+            return
 
         await callback.message.edit_text(
             f"📖 <b>Surah {ayah.surah_number}, Oyat {ayah.ayah_number}</b>\n\n"
@@ -64,13 +79,26 @@ async def show_translation(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith("review_correct_"))
 async def review_correct(callback: CallbackQuery):
-    _, _, progress_id, ayah_id = callback.data.split("_")
-    progress_id, ayah_id = int(progress_id), int(ayah_id)
+    parts = callback.data.split("_")
+    if len(parts) != 4:
+        await callback.answer("Noto'g'ri so'rov.", show_alert=True)
+        return
+
+    try:
+        progress_id = int(parts[2])
+        ayah_id = int(parts[3])
+    except ValueError:
+        await callback.answer("Noto'g'ri so'rov.", show_alert=True)
+        return
 
     async with AsyncSessionLocal() as session:
         user = await get_user(session, callback.from_user.id)
+        if not user:
+            await callback.answer("Avval /start bosing.", show_alert=True)
+            return
+
         await save_review_result(session, user.id, ayah_id, ReviewResult.correct)
-        await mark_memorized(session, progress_id)  # bosqichni oshiradi
+        await mark_memorized(session, progress_id)
 
     await callback.message.edit_reply_markup(reply_markup=None)
     await callback.message.answer("✅ Ajoyib! Davom eting. 💪", reply_markup=main_menu_keyboard())
@@ -79,11 +107,24 @@ async def review_correct(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith("review_wrong_"))
 async def review_wrong(callback: CallbackQuery):
-    _, _, progress_id, ayah_id = callback.data.split("_")
-    progress_id, ayah_id = int(progress_id), int(ayah_id)
+    parts = callback.data.split("_")
+    if len(parts) != 4:
+        await callback.answer("Noto'g'ri so'rov.", show_alert=True)
+        return
+
+    try:
+        progress_id = int(parts[2])
+        ayah_id = int(parts[3])
+    except ValueError:
+        await callback.answer("Noto'g'ri so'rov.", show_alert=True)
+        return
 
     async with AsyncSessionLocal() as session:
         user = await get_user(session, callback.from_user.id)
+        if not user:
+            await callback.answer("Avval /start bosing.", show_alert=True)
+            return
+
         await save_review_result(session, user.id, ayah_id, ReviewResult.incorrect)
         await reset_progress_stage(session, progress_id)
 

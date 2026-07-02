@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from db.base import Base
 from db.database import conf
-import db.models   # <-- IMPORTANT
 
 engine = create_async_engine(conf.db.db_url, echo=True)
 
@@ -10,6 +10,7 @@ AsyncSessionLocal = async_sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,
 )
+
 
 async def create_tables():
     print(Base.metadata.tables.keys())

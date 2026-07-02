@@ -9,7 +9,7 @@ from db.crud import (
     get_due_reviews,
 )
 from db.session import AsyncSessionLocal
-from bot.keyboards import ayah_keyboard, main_menu_keyboard
+from keyboards import ayah_keyboard, main_menu_keyboard
 
 logger = logging.getLogger(__name__)
 

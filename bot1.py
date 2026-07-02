@@ -2,13 +2,17 @@ import asyncio
 import logging
 
 from bot.loader import bot, dp
-from bot.handlers import start, ayah, review, quiz, stats
+from handlers import errors, start, ayah, review, quiz, stats
 from scheduler import setup_scheduler
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
 
 
 async def main():
+    dp.include_router(errors.router)
     dp.include_router(start.router)
     dp.include_router(ayah.router)
     dp.include_router(review.router)
@@ -23,6 +27,7 @@ async def main():
         await dp.start_polling(bot)
     finally:
         scheduler.shutdown()
+        await bot.session.close()
 
 
 if __name__ == "__main__":

@@ -1,14 +1,19 @@
+import logging
+
 from aiogram import Router, F
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message, CallbackQuery
 
-from db.session import AsyncSessionLocal
 from db.crud import (
     get_user, get_next_unassigned_ayah, assign_ayah,
     get_todays_learning, mark_memorized, get_ayah_by_id,
 )
-from bot.keyboards import ayah_keyboard, main_menu_keyboard
+from db.session import AsyncSessionLocal
+from keyboards import ayah_keyboard, main_menu_keyboard
 
 router = Router()
+
+logger = logging.getLogger(__name__)
 
 
 def format_ayah_msg(ayah) -> str:
@@ -25,7 +30,11 @@ async def _send_ayah_for_progress(message: Message, progress, ayah):
         reply_markup=ayah_keyboard(progress.id),
     )
     if ayah.audio_url:
-        await message.answer_audio(ayah.audio_url, caption="🔊 Tinglang")
+        try:
+            await message.answer_audio(ayah.audio_url, caption="🔊 Tinglang")
+        except TelegramBadRequest as e:
+            logger.warning(f"Audio yuborilmadi (ayah_id={ayah.id}): {e}")
+            await message.answer("⚠️ Audio hozircha mavjud emas.")
 
 
 @router.message(F.text == "📖 Bugungi oyat")
