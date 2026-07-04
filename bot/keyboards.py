@@ -49,3 +49,25 @@ def quiz_keyboard(correct_id: int, options: list[Ayah]) -> InlineKeyboardMarkup:
         builder.button(text=label, callback_data=f"quiz_{correct_id}_{opt.id}")
     builder.adjust(1)
     return builder.as_markup()
+
+
+def admin_menu_keyboard() -> ReplyKeyboardMarkup:
+    builder = ReplyKeyboardBuilder()
+    builder.row(
+        KeyboardButton(text="👥 Foydalanuvchilar"),
+        KeyboardButton(text="📊 Umumiy statistika"),
+    )
+    builder.row(
+        KeyboardButton(text="📢 Xabar yuborish"),
+        KeyboardButton(text="➕ Oyat qo'shish"),
+    )
+    builder.row(
+        KeyboardButton(text="🔙 Asosiy menyu"),
+    )
+    return builder.as_markup(resize_keyboard=True)
+
+
+def cancel_keyboard() -> ReplyKeyboardMarkup:
+    builder = ReplyKeyboardBuilder()
+    builder.row(KeyboardButton(text="❌ Bekor qilish"))
+    return builder.as_markup(resize_keyboard=True)

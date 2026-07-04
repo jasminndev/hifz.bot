@@ -1,18 +1,14 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import Message, CallbackQuery
 
 from db.crud import get_user, create_user, set_daily_goal
 from db.session import AsyncSessionLocal
 from keyboards import goal_keyboard, main_menu_keyboard
+from states import Registration
 
 router = Router()
-
-
-class Registration(StatesGroup):
-    choosing_goal = State()
 
 
 @router.message(CommandStart())

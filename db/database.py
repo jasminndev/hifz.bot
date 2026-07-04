@@ -22,6 +22,11 @@ class DatabaseConfig:
 @dataclass
 class BotConfig:
     BOT_TOKEN: str = os.getenv("BOT_TOKEN")
+    ADMIN_IDS: list[int] = None
+
+    def __post_init__(self):
+        ids = os.getenv("ADMIN_IDS", "")
+        self.ADMIN_IDS = [int(i.strip()) for i in ids.split(",") if i.strip()]
 
 
 @dataclass

@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from bot.loader import bot, dp
-from handlers import errors, start, ayah, review, quiz, stats
+from handlers import errors, start, ayah, review, quiz, stats, admin
 from scheduler import setup_scheduler
 
 logging.basicConfig(
@@ -13,6 +13,7 @@ logging.basicConfig(
 
 async def main():
     dp.include_router(errors.router)
+    dp.include_router(admin.router)
     dp.include_router(start.router)
     dp.include_router(ayah.router)
     dp.include_router(review.router)
