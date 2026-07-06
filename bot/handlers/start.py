@@ -7,6 +7,7 @@ from aiogram.types import Message, CallbackQuery
 from db.crud import get_user, create_user, set_daily_goal
 from db.session import AsyncSessionLocal
 from keyboards import goal_keyboard, main_menu_keyboard
+from utils.texts import WELCOME_NEW, WELCOME_BACK, GOAL_SET
 
 router = Router()
 
@@ -24,8 +25,7 @@ async def cmd_start(message: Message, state: FSMContext):
 
         if user:
             await message.answer(
-                f"Assalomu alaykum, <b>{tg_user.full_name}</b>! 🌙\n\n"
-                "Xush kelibsiz! Quron yodlash botiga qaytdingiz.",
+                WELCOME_BACK.format(name=tg_user.full_name),
                 reply_markup=main_menu_keyboard(),
             )
         else:
@@ -36,9 +36,7 @@ async def cmd_start(message: Message, state: FSMContext):
                 fullname=tg_user.full_name,
             )
             await message.answer(
-                f"Assalomu alaykum, <b>{tg_user.full_name}</b>! 🌙\n\n"
-                "Quron yodlash botiga xush kelibsiz!\n\n"
-                "Har kuni nechta oyat yodlamoqchisiz?",
+                WELCOME_NEW.format(name=tg_user.full_name),
                 reply_markup=goal_keyboard(),
             )
             await state.set_state(Registration.choosing_goal)
@@ -53,8 +51,10 @@ async def choose_goal(callback: CallbackQuery, state: FSMContext):
 
     await state.clear()
     await callback.message.edit_text(
-        f"✅ Ajoyib! Siz kunlik <b>{goal} oyat</b> yodlashni tanladingiz.\n\n"
-        "Muvaffaqiyat tilayman! 🤲"
+        GOAL_SET.format(goal=goal)
     )
-    await callback.message.answer("Asosiy menyu:", reply_markup=main_menu_keyboard())
+    await callback.message.answer(
+        "Asosiy menyu 👇",
+        reply_markup=main_menu_keyboard(),
+    )
     await callback.answer()

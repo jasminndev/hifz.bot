@@ -6,6 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from db.crud import get_user, get_memorized_ayahs, get_ayah_by_id
 from db.session import AsyncSessionLocal
 from keyboards import quiz_keyboard, main_menu_keyboard
+from utils.texts import QUIZ_CORRECT
 
 router = Router()
 
@@ -49,11 +50,14 @@ async def check_quiz(callback: CallbackQuery):
 
     async with AsyncSessionLocal() as session:
         if correct_id == chosen_id:
-            await callback.message.edit_text("✅ <b>To'g'ri!</b> Barakalloh! 🌟")
+            await callback.message.edit_text(QUIZ_CORRECT)
         else:
             correct_ayah = await get_ayah_by_id(session, correct_id)
             await callback.message.edit_text(
-                f"❌ <b>Noto'g'ri.</b>\n\nTo'g'ri javob:\n{correct_ayah.uzbek_text}"
+                f"❌ <b>Noto'g'ri.</b>\n\n"
+                f"✅ <b>To'g'ri javob:</b>\n\n"
+                f"<b>{correct_ayah.arabic_text}</b>\n\n"
+                f"🌐 <i>{correct_ayah.uzbek_text}</i>"
             )
 
     await callback.message.answer("Davom etish:", reply_markup=main_menu_keyboard())
