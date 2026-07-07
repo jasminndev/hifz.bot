@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-
-from db.database import conf
+from jose import JWTError, jwt
 
 SECRET_KEY = "your-secret-key-change-this"  # .env ga o'tkazing
 ALGORITHM = "HS256"
@@ -27,10 +26,9 @@ def verify_token(token: str = Depends(oauth2_scheme)) -> dict:
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception
         return payload
     except JWTError:
         raise credentials_exception
-    
