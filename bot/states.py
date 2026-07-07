@@ -3,6 +3,7 @@ from aiogram.fsm.state import StatesGroup, State
 
 class Registration(StatesGroup):
     choosing_goal = State()
+    choosing_review_time = State()
 
 
 class BroadcastState(StatesGroup):

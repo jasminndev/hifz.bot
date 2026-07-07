@@ -274,3 +274,50 @@ async def set_review_time(session: AsyncSession, user_id: int, review_time: str)
     if user:
         user.review_time = review_time
         await session.commit()
+
+
+async def get_all_users(session: AsyncSession) -> list[User]:
+    result = await session.execute(
+        select(User).order_by(User.created_at.desc())
+    )
+    return list(result.scalars().all())
+
+
+async def get_total_stats(session: AsyncSession) -> dict:
+    total_users = await session.scalar(select(func.count(User.id)))
+    active_users = await session.scalar(
+        select(func.count(User.id)).where(User.is_active == True)
+    )
+    total_ayahs = await session.scalar(select(func.count(Ayah.id)))
+    total_memorized = await session.scalar(
+        select(func.count(MemorizationProgress.id)).where(
+            MemorizationProgress.status == ProgressStatus.memorized
+        )
+    )
+    total_reviews = await session.scalar(select(func.count(Review.id)))
+
+    return {
+        "total_users": total_users or 0,
+        "active_users": active_users or 0,
+        "total_ayahs": total_ayahs or 0,
+        "total_memorized": total_memorized or 0,
+        "total_reviews": total_reviews or 0,
+    }
+
+
+async def block_user(session: AsyncSession, user_id: int) -> bool:
+    user = await get_user(session, user_id)
+    if not user:
+        return False
+    user.is_active = False
+    await session.commit()
+    return True
+
+
+async def unblock_user(session: AsyncSession, user_id: int) -> bool:
+    user = await get_user(session, user_id)
+    if not user:
+        return False
+    user.is_active = True
+    await session.commit()
+    return True
