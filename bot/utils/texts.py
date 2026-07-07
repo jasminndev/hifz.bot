@@ -35,7 +35,6 @@ def get_surah_name(surah_number: int) -> str:
     return SURAH_NAMES.get(surah_number, f"Surah {surah_number}")
 
 
-
 WELCOME_NEW = """
 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
 
@@ -202,3 +201,100 @@ NO_AYAHS_LEFT = """
 Barcha mavjud oyatlarni yodladingiz!
 Tez orada yangi oyatlar qo'shiladi 📖
 """
+
+QUIZ_TYPE_SELECT = """
+━━━━━━━━━━━━━━━━━━━━━
+🧪 <b>Test turini tanlang</b>
+━━━━━━━━━━━━━━━━━━━━━
+
+📝 <b>Oddiy test</b> — 1 ta savol, darhol natija
+
+🏆 <b>Mini imtihon</b> — savollar ketma-ket,
+    oxirida umumiy natija
+
+👇 Tanlang:"""
+
+EXAM_QUESTION = """
+━━━━━━━━━━━━━━━━━━━━━
+🏆 <b>Mini imtihon</b> • {current}/{total}
+━━━━━━━━━━━━━━━━━━━━━
+
+Quyidagi oyatning tarjimasini toping:
+
+<b>{arabic_text}</b>
+
+👇 To'g'ri javobni tanlang:"""
+
+EXAM_ANSWER_CORRECT = "✅ To'g'ri! ({current}/{total})"
+EXAM_ANSWER_WRONG = "❌ Noto'g'ri. To'g'ri: {uzbek_text} ({current}/{total})"
+
+EXAM_RESULT = """
+━━━━━━━━━━━━━━━━━━━━━
+🏆 <b>Imtihon yakunlandi!</b>
+━━━━━━━━━━━━━━━━━━━━━
+
+📊 Natija: <b>{correct}/{total}</b>
+⭐️ To'g'ri: <b>{correct} ta</b>
+❌ Noto'g'ri: <b>{wrong} ta</b>
+📈 Ball: <b>{percent}%</b>
+
+{grade}
+━━━━━━━━━━━━━━━━━━━━━"""
+
+
+def get_grade(percent: int) -> str:
+    if percent == 100:
+        return "🥇 Mukammal natija! Barakalloh!"
+    elif percent >= 80:
+        return "🥈 Juda yaxshi! Davom eting!"
+    elif percent >= 60:
+        return "🥉 Yaxshi! Yana mashq qiling!"
+    else:
+        return "💪 Xavotir olmang! Takrorlang!"
+
+
+REVIEW_TIME_SELECT = """
+━━━━━━━━━━━━━━━━━━━━━
+⏰ <b>Takrorlash vaqtini tanlang</b>
+━━━━━━━━━━━━━━━━━━━━━
+
+Har kuni qaysi vaqtda takrorlash
+eslatmasi olishni xohlaysiz?
+
+👇 Qulay vaqtni tanlang:"""
+
+REVIEW_TIME_SET = """
+✅ <b>Vaqt belgilandi!</b>
+
+⏰ Takrorlash eslatmasi: <b>har kuni {time} da</b>
+
+Alloh yodlashingizni oson qilsin! 🤲
+"""
+
+SRS_MEMORIZED = """
+✅ <b>Barakalloh!</b> Oyat yod olindi!
+
+━━━━━━━━━━━━━━━━━━━━━
+Bu oyatni qanchalik oson esladingiz?
+━━━━━━━━━━━━━━━━━━━━━"""
+
+SRS_RESULT = """
+📅 Keyingi takrorlash: <b>{when}</b>
+
+{difficulty_msg}
+"""
+
+DIFFICULTY_MESSAGES = {
+    5: "🌟 Ajoyib! Interval uzaytirildi.",
+    3: "👍 Yaxshi! Davom eting.",
+    1: "💪 Xavotir olmang! Ertaga qaytamiz.",
+}
+
+SETTINGS_MENU = """
+━━━━━━━━━━━━━━━━━━━━━
+⚙️ <b>Sozlamalar</b>
+━━━━━━━━━━━━━━━━━━━━━
+
+🎯 Kunlik maqsad: <b>{goal} oyat</b>
+⏰ Takrorlash vaqti: <b>{review_time}</b>
+━━━━━━━━━━━━━━━━━━━━━"""

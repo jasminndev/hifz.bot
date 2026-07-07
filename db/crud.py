@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import func
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -148,7 +150,7 @@ async def get_due_reviews(session: AsyncSession, db_user_id: int) -> list[Memori
         .where(
             MemorizationProgress.user_id == db_user_id,
             MemorizationProgress.status == ProgressStatus.memorized,
-            MemorizationProgress.next_review_at <= datetime.now(),
+            MemorizationProgress.next_review_at <= datetime.utcnow(),
         )
         .order_by(MemorizationProgress.next_review_at)
     )
@@ -233,3 +235,42 @@ async def get_stats(session: AsyncSession, db_user_id: int) -> dict:
 async def get_all_active_users(session: AsyncSession) -> list[User]:
     result = await session.execute(select(User).where(User.is_active == True))
     return list(result.scalars().all())
+
+
+async def mark_memorized_sm2(
+        session: AsyncSession,
+        progress_id: int,
+        quality: int,
+) -> "SRSResult":
+    from services.srs import calculate_next_review
+
+    result = await session.execute(
+        select(MemorizationProgress).where(MemorizationProgress.id == progress_id)
+    )
+    progress = result.scalar_one_or_none()
+    if not progress:
+        return None
+
+    srs = calculate_next_review(
+        stage=progress.review_stage,
+        easiness=progress.easiness,
+        interval=progress.interval,
+        quality=quality,
+    )
+
+    progress.status = ProgressStatus.memorized
+    progress.memorized_at = datetime.utcnow()
+    progress.next_review_at = srs.next_review_at
+    progress.review_stage = srs.new_stage
+    progress.easiness = srs.new_easiness
+    progress.interval = srs.new_interval
+
+    await session.commit()
+    return srs
+
+
+async def set_review_time(session: AsyncSession, user_id: int, review_time: str) -> None:
+    user = await get_user(session, user_id)
+    if user:
+        user.review_time = review_time
+        await session.commit()

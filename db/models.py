@@ -28,6 +28,7 @@ class User(TimeBasedModel):
     fullname: Mapped[str] = mapped_column(String(200), nullable=False)
     daily_goal: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    review_time: Mapped[str] = mapped_column(String(5), default="18:00")
 
     progress: Mapped[list["MemorizationProgress"]] = relationship(back_populates="user")
     reviews: Mapped[list["Review"]] = relationship(back_populates="user")
@@ -58,6 +59,8 @@ class MemorizationProgress(TimeBasedModel):
     memorized_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     next_review_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     review_stage: Mapped[int] = mapped_column(Integer, default=0)
+    easiness: Mapped[float] = mapped_column(default=2.5)
+    interval: Mapped[int] = mapped_column(Integer, default=1)
 
     user: Mapped["User"] = relationship(back_populates="progress")
     ayah: Mapped["Ayah"] = relationship(back_populates="progress")
