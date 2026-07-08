@@ -20,7 +20,6 @@ async def main():
     dp.include_router(quiz.router)
     dp.include_router(stats.router)
 
-
     scheduler = setup_scheduler(bot)
     scheduler.start()
     logging.info("Scheduler started.")
