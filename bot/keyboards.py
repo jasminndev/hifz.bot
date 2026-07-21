@@ -99,7 +99,7 @@ def exam_keyboard(
         label = opt.uzbek_text[:55] + "…" if len(opt.uzbek_text) > 55 else opt.uzbek_text
 
         if answered_correct_id is not None:
-            # Javob berilgan — tugmalar rangini ko'rsatamiz
+            # Javob berilgan - tugmalar rangini ko'rsatamiz
             if opt.id == answered_correct_id:
                 label = f"✅ {label}"
             elif opt.id == chosen_id and chosen_id != answered_correct_id:

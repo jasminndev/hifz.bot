@@ -13,7 +13,7 @@ class LoginRequest(BaseModel):
     secret: str
 
 
-ADMIN_SECRET = "admin123" 
+ADMIN_SECRET = "1111"
 
 
 @router.post("/login", response_model=TokenResponse)
